@@ -3,6 +3,7 @@ package br.com.sistemavendas.dao;
 import br.com.sistemavendas.factory.ConnectionFactory;
 import br.com.sistemavendas.model.Produto;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +22,7 @@ public class ProdutoDAO {
     public List<Produto> listaTodos() throws SQLException{
 
         // criamos a variavel que armazena o comando sql
-        String sql = "SELECT id,nome,preco,quantidade FROM produtos";
+        String sql = "SELECT id,nome,preco,quantidade FROM produtos ORDER BY id ASC";
 
         // criamos uma lista do tipo produto que é um arraylist, visto que nao sabemos quantos itens tem a tabela
         // o arraylist sera o melhor para armazanar
@@ -75,6 +76,39 @@ public class ProdutoDAO {
 
             }
     
+
+        }
+        return null;
+    }
+
+    public Produto Inserir(String nome, BigDecimal preco, int quantidade) throws SQLException{
+
+        // verificar se os campos estao corretos e não vazios
+        if(nome == null | nome.isBlank() || preco == null || preco.compareTo(BigDecimal.ZERO) <= 0 || quantidade < 0){
+            throw new IllegalArgumentException( "Dados do produto Inválidos!");
+        }
+
+        String sql = " INSERT INTO produtos (nome,preco,quantidade) VALUES (?,?,?) RETURNING id";
+
+        try (Connection conexao = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)){
+            // faz a conversão para dos dados sql para o tipo java
+            stmt.setString(1,nome);
+            stmt.setBigDecimal(2,preco);
+            stmt.setInt(3,quantidade);
+
+            // Cria o objeto que vai armazenar o valor e executa a query e busca o ID do produto gerado
+            try (ResultSet resultado = stmt.executeQuery()){
+                // "busca" o objeto
+                if (resultado.next()){
+                    // aqui foi feito a conversão do valor SQL para java
+                    int idGerado = resultado.getInt("id");
+                    // e instacia o novo objeto com os valores corretos
+                    return new Produto(idGerado,nome, preco, quantidade);
+                }
+            }
+
+
 
         }
         return null;

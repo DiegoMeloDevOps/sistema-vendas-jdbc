@@ -9,7 +9,7 @@ public class Produto {
     private BigDecimal preco;
     private int quantidade;
 
-    public Produto(){
+    public Produto(String nome, BigDecimal preco, int quantidade){
 
     }
 

@@ -4,6 +4,7 @@ package br.com.sistemavendas;
 import br.com.sistemavendas.dao.ProdutoDAO;
 import br.com.sistemavendas.model.Produto;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -30,6 +31,10 @@ public class Main {
         }else {
             System.out.println("Produto Não Encontrado");
         }
+
+        Produto novoProduto = produtoDAO.Inserir("Pizza Bacon", new BigDecimal("19.90"),90);
+        System.out.println("Produto Cadastrado");
+        System.out.println(novoProduto);
 
     }
 }
