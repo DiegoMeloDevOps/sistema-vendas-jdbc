@@ -3,6 +3,7 @@ package br.com.sistemavendas;
 
 import br.com.sistemavendas.dao.ProdutoDAO;
 import br.com.sistemavendas.model.Produto;
+import br.com.sistemavendas.service.ProdutoService;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -11,51 +12,47 @@ import java.util.List;
 public class Main {
     static void main() throws SQLException {
 
-        // Instancie um objeto da Classe produtoDAO
         ProdutoDAO produtoDAO = new ProdutoDAO();
-        // crie uma lista do tipo produto que se chama produtos
-        // pois ira armazenar todos os produtos com seus campos
-        List<Produto> produtos = produtoDAO.listaTodosProdutos();
 
-        // percorra esta lista e exiba
-        for(Produto produto: produtos){
-            // o metodo toString foi sobreescrito na classe Produto
-            // dessa forma vai retornar o texto definido + os atributos do objeto
-            System.out.println(produto);
-        }
+        ProdutoService produtoService = new ProdutoService(produtoDAO);
 
-        Produto produto = produtoDAO.buscaPorIdProduto(2);
-
-        if(produto != null){
-            System.out.println(produto);
+        Produto novoProduto = produtoService.cadastrarProduto("Pizza Abacaxi",new BigDecimal("19.90"),10);
+        if(novoProduto != null){
+            System.out.println("Produto: "+novoProduto.getNome()+" cadastrado!");
         }else {
-            System.out.println("Produto Não Encontrado");
+            System.out.println("Erro! Produto Não Cadastrado!");
         }
 
-        Produto novoProduto = produtoDAO.inserirProduto("Pizza Bacon", new BigDecimal("19.00"),40);
-        System.out.println("Produto Cadastrado");
-        System.out.println(novoProduto);
+        List<Produto> produtos = produtoService.listarProdutos();
+        for(Produto produtosLista : produtos){
+            System.out.println("ID: "+produtosLista.getId()+" Produto: "+produtosLista.getNome()+" Preço R$: "+produtosLista.getPreco()+" Quantidade: "+produtosLista.getQuantidade());
+        }
 
-        // para mudar os valores do produto para gerar atualização
-        novoProduto.setNome("Pizza Bacon Especial");
-        novoProduto.setPreco(new BigDecimal("25.00"));
-        novoProduto.setQuantidade(50);
-
-        // passando o objeto como parametro simulando como se fosse a entrada de um usuario
-        boolean atualizarProduto = produtoDAO.atualizarProduto(novoProduto);
-
-        if (atualizarProduto){
-            System.out.println("Atualizado Com Sucesso!");
+        Produto produto = produtoService.buscaProdutoId(novoProduto.getId());
+        if (produto != null){
+            System.out.println("ID: "+produto.getId()+" Produto: "+produto.getNome()+" Preco R$: "+produto.getPreco()+" Quantidade: "+produto.getQuantidade());
         }else{
-            System.out.println("Erro ao Atualizar!");
+            System.out.println("Produto Não Encontrado! ");
         }
 
-        boolean deletarProduto = produtoDAO.deletarProduto(novoProduto.getId());
+        produto.setNome("Pizza Abacaxi Especial!");
+        produto.setPreco(new BigDecimal("30.00"));
+        produto.setQuantidade(10);
 
-        if (deletarProduto){
-            System.out.println("Deletado com Sucesso!");
+        boolean atualizado = produtoService.atualizarProduto(produto);
+
+        if (atualizado){
+            System.out.println("ID: "+produto.getId()+ " Produto: "+produto.getNome()+ " Atualizado! "+" Preço R$: "+produto.getPreco()+"  Quantidade: "+produto.getQuantidade());
         }else {
-            System.out.println("Erro ao Deletar!");
+            System.out.println("Produto Não Encontrado!");
+        }
+
+        boolean produtoDeletado = produtoService.deletarProduto(produto.getId());
+        if (produtoDeletado) {
+            System.out.println("Produto " + produto.getNome() + " Deletado!");
+        }
+        else{
+            System.out.println("Produto Não Encotrado!");
         }
 
     }
