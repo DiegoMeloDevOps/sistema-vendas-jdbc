@@ -19,7 +19,7 @@ public class ProdutoDAO {
 
     // query para consultar toda a tabela
     // criamos uma lista do tipo Produto que ira percorrer toda a tabela
-    public List<Produto> listaTodos() throws SQLException{
+    public List<Produto> listaTodosProdutos() throws SQLException{
 
         // criamos a variavel que armazena o comando sql
         String sql = "SELECT id,nome,preco,quantidade FROM produtos ORDER BY id ASC";
@@ -54,7 +54,7 @@ public class ProdutoDAO {
 
     }
 
-    public Produto buscaPorId(int id)throws SQLException{
+    public Produto buscaPorIdProduto(int id)throws SQLException{
 
         String sql = "SELECT id,nome,preco,quantidade FROM produtos WHERE id = ?";
 
@@ -81,11 +81,15 @@ public class ProdutoDAO {
         return null;
     }
 
-    public Produto Inserir(String nome, BigDecimal preco, int quantidade) throws SQLException{
+    public Produto inserirProduto(String nome, BigDecimal preco, int quantidade) throws SQLException{
 
         // verificar se os campos estao corretos e não vazios
-        if(nome == null | nome.isBlank() || preco == null || preco.compareTo(BigDecimal.ZERO) <= 0 || quantidade < 0){
-            throw new IllegalArgumentException( "Dados do produto Inválidos!");
+        if (nome == null || nome.isBlank()
+                || preco == null
+                || preco.compareTo(BigDecimal.ZERO) <= 0
+                || quantidade < 0) {
+
+            throw new IllegalArgumentException("Dados do produto inválidos!");
         }
 
         String sql = " INSERT INTO produtos (nome,preco,quantidade) VALUES (?,?,?) RETURNING id";
@@ -114,5 +118,52 @@ public class ProdutoDAO {
         return null;
     }
 
+    public boolean atualizarProduto(Produto produto)throws SQLException{
 
+
+        String sql = "UPDATE produtos SET nome = ?,preco = ?,quantidade = ? WHERE id = ?";
+
+        try (Connection conexao = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql);){
+
+            stmt.setString(1,produto.getNome());
+            stmt.setBigDecimal(2,produto.getPreco());
+            stmt.setInt(3,produto.getQuantidade());
+            stmt.setInt(4,produto.getId());
+
+            int validaProduto = stmt.executeUpdate();
+
+
+            if (validaProduto > 0){
+                return true;
+            }else{
+                return false;
+            }
+
+        }
+
+
+
+
+
+    }
+    public boolean deletarProduto(int id) throws SQLException{
+        String sql ="DELETE FROM produtos WHERE id = ?";
+
+        try (Connection conexao = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conexao.prepareStatement(sql);){
+
+            stmt.setInt(1,id);
+
+           int validadaExclusao =  stmt.executeUpdate();
+
+            if(validadaExclusao > 0){
+                return true;
+            }else{
+                return false;
+            }
+
+        }
+
+    }
 }

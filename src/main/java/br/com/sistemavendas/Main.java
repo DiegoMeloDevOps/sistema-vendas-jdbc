@@ -15,7 +15,7 @@ public class Main {
         ProdutoDAO produtoDAO = new ProdutoDAO();
         // crie uma lista do tipo produto que se chama produtos
         // pois ira armazenar todos os produtos com seus campos
-        List<Produto> produtos = produtoDAO.listaTodos();
+        List<Produto> produtos = produtoDAO.listaTodosProdutos();
 
         // percorra esta lista e exiba
         for(Produto produto: produtos){
@@ -24,7 +24,7 @@ public class Main {
             System.out.println(produto);
         }
 
-        Produto produto = produtoDAO.buscaPorId(2);
+        Produto produto = produtoDAO.buscaPorIdProduto(2);
 
         if(produto != null){
             System.out.println(produto);
@@ -32,9 +32,38 @@ public class Main {
             System.out.println("Produto Não Encontrado");
         }
 
-        Produto novoProduto = produtoDAO.Inserir("Pizza Bacon", new BigDecimal("19.90"),90);
+        Produto novoProduto = produtoDAO.inserirProduto("Pizza Bacon", new BigDecimal("19.00"),40);
         System.out.println("Produto Cadastrado");
         System.out.println(novoProduto);
 
+        // para mudar os valores do produto para gerar atualização
+        novoProduto.setNome("Pizza Bacon Especial");
+        novoProduto.setPreco(new BigDecimal("25.00"));
+        novoProduto.setQuantidade(50);
+
+        // passando o objeto como parametro simulando como se fosse a entrada de um usuario
+        boolean atualizarProduto = produtoDAO.atualizarProduto(novoProduto);
+
+        if (atualizarProduto){
+            System.out.println("Atualizado Com Sucesso!");
+        }else{
+            System.out.println("Erro ao Atualizar!");
+        }
+
+        boolean deletarProduto = produtoDAO.deletarProduto(novoProduto.getId());
+
+        if (deletarProduto){
+            System.out.println("Deletado com Sucesso!");
+        }else {
+            System.out.println("Erro ao Deletar!");
+        }
+
     }
+
+
+
+
+
+
+
 }
