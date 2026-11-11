@@ -14,9 +14,13 @@ public class Main {
 
         ProdutoDAO produtoDAO = new ProdutoDAO();
 
+        // criando o service que ira validadar as regras de negocios antes de aplicas as operações
+        // sql do produtoDAO
         ProdutoService produtoService = new ProdutoService(produtoDAO);
 
+        // criando um objeto da classe produtom , depois chamaremos o service para vaidar e se passar, realiza a operação sql
         Produto novoProduto = produtoService.cadastrarProduto("Pizza Abacaxi",new BigDecimal("19.90"),10);
+        // validando os dados e mensagem caso ocorra algum erro
         if(novoProduto != null){
             System.out.println("Produto: "+novoProduto.getNome()+" cadastrado!");
         }else {
@@ -35,10 +39,12 @@ public class Main {
             System.out.println("Produto Não Encontrado! ");
         }
 
+        // como no atualizar produto o metodo recebe um Produto , estamos "simulando" uma mudança no cadastro
         produto.setNome("Pizza Abacaxi Especial!");
         produto.setPreco(new BigDecimal("30.00"));
         produto.setQuantidade(10);
 
+        // se o Update funcionou ira retornnar uma mensagem true ou false
         boolean atualizado = produtoService.atualizarProduto(produto);
 
         if (atualizado){

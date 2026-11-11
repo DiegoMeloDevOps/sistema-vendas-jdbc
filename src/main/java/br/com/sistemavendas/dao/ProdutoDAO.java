@@ -166,4 +166,19 @@ public class ProdutoDAO {
         }
 
     }
+
+    public boolean atualizarEstoque(Connection conn, int id,int quantidade) throws SQLException{
+        String sql = "UPDATE produtos SET quantidade = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setInt(1,quantidade);
+            stmt.setInt(2,id);
+
+            return stmt.executeUpdate()>0;
+        }
+
+
+    }
+
 }
