@@ -138,7 +138,7 @@ public class ProdutoService {
                             produto.getQuantidade()
                     );
 
-                    // Se nenhum produto for atualizado, interrompe a operação
+                    // Se nenhum produto for atualizado ou retornar um false, interrompe a operação
                     if (!atualizado) {
                         throw new SQLException(
                                 "Produto não encontrado: ID " + produto.getId()

@@ -61,6 +61,22 @@ public class Main {
             System.out.println("Produto Não Encotrado!");
         }
 
+        ProdutoService produtoService1 = new ProdutoService(produtoDAO);
+
+        List<Produto>  produtos1 = List.of(
+                new Produto(22,"Pizza Abacaxi",new BigDecimal("25.90"),40),
+                new Produto(3,"Pizza Portuguesa",new BigDecimal("50.00"),20),
+                new Produto(999,"Inexistente",new BigDecimal("500.00"),20)
+        );
+
+        try {
+            produtoService1.atualizarEstoques(produtos1);
+        } catch (SQLException e) {
+            System.out.println("Falhou na atualização! " + e.getMessage());
+        }
+
+
+
     }
 
 
