@@ -1,7 +1,9 @@
 package br.com.sistemavendas;
 
 
+import br.com.sistemavendas.dao.PedidoDAO;
 import br.com.sistemavendas.dao.ProdutoDAO;
+import br.com.sistemavendas.model.Pedido;
 import br.com.sistemavendas.model.Produto;
 import br.com.sistemavendas.service.ProdutoService;
 
