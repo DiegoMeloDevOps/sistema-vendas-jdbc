@@ -1,6 +1,7 @@
 package br.com.sistemavendas.model;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class Pedido {
         this.idPedido = idPedido;
     }
 
-    public LocalDateTime getdataPedido() {
+    public Timestamp getdataPedido() {
         return dataPedido;
     }
 

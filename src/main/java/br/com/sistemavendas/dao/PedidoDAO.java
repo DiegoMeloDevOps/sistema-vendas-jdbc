@@ -2,16 +2,14 @@ package br.com.sistemavendas.dao;
 
 import br.com.sistemavendas.factory.ConnectionFactory;
 import br.com.sistemavendas.model.Pedido;
+import br.com.sistemavendas.model.Produto;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoDAO {
-
+    // lista todos os pedidos
     public List<Pedido> listaTodosPedido() throws SQLException {
 
         String sql = "SELECT id_pedido, id_cliente, data_pedido, valor_total FROM pedidos ORDER BY id_pedido ASC";
@@ -34,7 +32,7 @@ public class PedidoDAO {
             return pedidos;
         }
     }
-
+    // busca pedido por id
     public Pedido buscaPedidoId(int id) throws SQLException {
         String sql = "SELECT id_pedido, id_cliente, data_pedido, valor_total FROM pedidos WHERE id_pedido = ?";
 
@@ -57,4 +55,29 @@ public class PedidoDAO {
             return null;
         }
     }
+
+    public int salvarPedido( Pedido pedido) throws SQLException{
+        // insere um registro com as informações do pedido , ele pega a hora atual para cadastrar o horario do pedido,
+        // e como não sabemo o id ele que vai ser gerado ele retorna para gente como valor
+        String sql = "INSERT INTO pedidos (id_cliente,data_pedido,valor_total) VALUES (?,CURRENT_TIMESTAMP,?) RETURNING id_pedido";
+
+        try (Connection conexao = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conexao.prepareStatement(sql)){
+            // fazendo a conversão dos dados trazido do banco para o tipo java
+            stmt.setInt(1,pedido.getidPedido());
+            stmt.setBigDecimal(2,pedido.getvalorTotal());
+
+            // pegando o id do pedido e convertendo para um tipo java
+            try (ResultSet resultado = stmt.executeQuery()){
+                if (resultado.next()){
+                    return resultado.getInt("id_pedido");
+                }
+            }
+
+
+        }
+        throw new SQLException("Não Foi possivel cadastrar o pedido. ");
+    }
+
+
 }

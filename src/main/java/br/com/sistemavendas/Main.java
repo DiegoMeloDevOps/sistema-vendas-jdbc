@@ -9,6 +9,8 @@ import br.com.sistemavendas.service.ProdutoService;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class Main {
@@ -76,6 +78,13 @@ public class Main {
         } catch (SQLException e) {
             System.out.println("Falhou na atualização! " + e.getMessage());
         }
+
+        PedidoDAO pedidoDAO = new PedidoDAO();
+        LocalDateTime horaAtual = LocalDateTime.now();
+        Pedido pedido = new Pedido(1, horaAtual,new BigDecimal("200.00"));
+
+
+
 
 
 
