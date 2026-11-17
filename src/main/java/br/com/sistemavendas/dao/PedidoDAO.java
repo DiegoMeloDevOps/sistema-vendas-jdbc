@@ -79,5 +79,48 @@ public class PedidoDAO {
         throw new SQLException("Não Foi possivel cadastrar o pedido. ");
     }
 
+    public boolean atualizarPedido(Pedido pedido) throws SQLException{
+
+        String sql = "UPDATE pedidos SET valor_total = ? WHERE id_pedido = ?";
+
+        try (Connection conexao = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql);){
+
+            stmt.setBigDecimal(1,pedido.getvalorTotal());
+            stmt.setLong(2,pedido.getidPedido());
+
+            int validaAtualizacao = stmt.executeUpdate();
+
+            if (validaAtualizacao > 0){
+                return true;
+            }else{
+                return false;
+            }
+
+        }
+
+
+    }
+
+
+    public boolean deletarPedido(Long id) throws SQLException{
+
+        String sql = "DELETE FROM pedidos WHERE id =?";
+
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql);){
+
+            stmt.setLong(1,id);
+
+            int validaExclusao = stmt.executeUpdate();
+
+            if (validaExclusao > 0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+    }
 
 }

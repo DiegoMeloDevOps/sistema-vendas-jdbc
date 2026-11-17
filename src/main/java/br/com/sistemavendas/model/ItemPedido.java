@@ -18,8 +18,7 @@ public class ItemPedido {
         this.precoUnitario = precoUnitario;
     }
 
-    public ItemPedido(Integer idProduto, int quantidade,
-                      BigDecimal precoUnitario) {
+    public ItemPedido(Integer idProduto, int quantidade, BigDecimal precoUnitario) {
         this.idProduto = idProduto;
         this.quantidade = quantidade;
         this.precoUnitario = precoUnitario;
