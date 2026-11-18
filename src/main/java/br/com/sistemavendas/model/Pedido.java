@@ -44,7 +44,7 @@ public class Pedido {
         this.idPedido = idPedido;
     }
 
-    public Timestamp getdataPedido() {
+    public LocalDateTime getdataPedido() {
         return dataPedido;
     }
 
