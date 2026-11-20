@@ -16,72 +16,7 @@ import java.util.List;
 public class Main {
     static void main() throws SQLException {
 
-        ProdutoDAO produtoDAO = new ProdutoDAO();
 
-        // criando o service que ira validadar as regras de negocios antes de aplicas as operações
-        // sql do produtoDAO
-        ProdutoService produtoService = new ProdutoService(produtoDAO);
-
-        // criando um objeto da classe produtom , depois chamaremos o service para vaidar e se passar, realiza a operação sql
-        Produto novoProduto = produtoService.cadastrarProduto("Pizza Abacaxi",new BigDecimal("19.90"),10);
-        // validando os dados e mensagem caso ocorra algum erro
-        if(novoProduto != null){
-            System.out.println("Produto: "+novoProduto.getNome()+" cadastrado!");
-        }else {
-            System.out.println("Erro! Produto Não Cadastrado!");
-        }
-
-        List<Produto> produtos = produtoService.listarProdutos();
-        for(Produto produtosLista : produtos){
-            System.out.println("ID: "+produtosLista.getId()+" Produto: "+produtosLista.getNome()+" Preço R$: "+produtosLista.getPreco()+" Quantidade: "+produtosLista.getQuantidade());
-        }
-
-        Produto produto = produtoService.buscaProdutoId(novoProduto.getId());
-        if (produto != null){
-            System.out.println("ID: "+produto.getId()+" Produto: "+produto.getNome()+" Preco R$: "+produto.getPreco()+" Quantidade: "+produto.getQuantidade());
-        }else{
-            System.out.println("Produto Não Encontrado! ");
-        }
-
-        // como no atualizar produto o metodo recebe um Produto , estamos "simulando" uma mudança no cadastro
-        produto.setNome("Pizza Abacaxi Especial!");
-        produto.setPreco(new BigDecimal("30.00"));
-        produto.setQuantidade(10);
-
-        // se o Update funcionou ira retornnar uma mensagem true ou false
-        boolean atualizado = produtoService.atualizarProduto(produto);
-
-        if (atualizado){
-            System.out.println("ID: "+produto.getId()+ " Produto: "+produto.getNome()+ " Atualizado! "+" Preço R$: "+produto.getPreco()+"  Quantidade: "+produto.getQuantidade());
-        }else {
-            System.out.println("Produto Não Encontrado!");
-        }
-
-        boolean produtoDeletado = produtoService.deletarProduto(produto.getId());
-        if (produtoDeletado) {
-            System.out.println("Produto " + produto.getNome() + " Deletado!");
-        }
-        else{
-            System.out.println("Produto Não Encotrado!");
-        }
-
-        ProdutoService produtoService1 = new ProdutoService(produtoDAO);
-
-        List<Produto>  produtos1 = List.of(
-                new Produto(22,"Pizza Abacaxi",new BigDecimal("25.90"),40),
-                new Produto(3,"Pizza Portuguesa",new BigDecimal("50.00"),20),
-                new Produto(999,"Inexistente",new BigDecimal("500.00"),20)
-        );
-
-        try {
-            produtoService1.atualizarEstoques(produtos1);
-        } catch (SQLException e) {
-            System.out.println("Falhou na atualização! " + e.getMessage());
-        }
-
-        PedidoDAO pedidoDAO = new PedidoDAO();
-        LocalDateTime horaAtual = LocalDateTime.now();
-        Pedido pedido = new Pedido(1, horaAtual,new BigDecimal("200.00"));
 
 
 

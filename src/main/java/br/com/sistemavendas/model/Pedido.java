@@ -7,19 +7,37 @@ import java.util.List;
 
 public class Pedido {
 
-    // Novo pedido, ainda não persistido
-    public Pedido(Integer idCliente, int id_cliente, LocalDateTime dataPedido, BigDecimal valorTotal) {
+    // 1. Criar um pedido novo, ainda não persistido
+    public Pedido(Integer idCliente, BigDecimal valorTotal) {
         this.idCliente = idCliente;
         this.valorTotal = valorTotal;
     }
 
-    // Quando formos consultar um produto que ja existe
-    public Pedido(Integer idPedido, LocalDateTime dataPedido, BigDecimal valorTotal){
+    // 2. Recuperar um pedido existente do banco
+    public Pedido(Integer idPedido, Integer idCliente,
+                  LocalDateTime dataPedido, BigDecimal valorTotal) {
+
         this.idPedido = idPedido;
+        this.idCliente = idCliente;
         this.dataPedido = dataPedido;
         this.valorTotal = valorTotal;
     }
 
+    // 3. Criar um pedido novo acompanhado dos seus itens
+    public Pedido(Integer idCliente, BigDecimal valorTotal,
+                  List<ItemPedido> itens) {
+
+        this.idCliente = idCliente;
+        this.valorTotal = valorTotal;
+        this.itens = itens;
+    }
+
+
+
+
+    public List<ItemPedido> getItens() {
+        return itens;
+    }
 
     public Integer getIdCliente() {
         return idCliente;

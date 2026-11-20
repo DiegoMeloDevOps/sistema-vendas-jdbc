@@ -168,12 +168,13 @@ public class ProdutoDAO {
     }
 
     public boolean atualizarEstoque(Connection conn, int id,int quantidade) throws SQLException{
-        String sql = "UPDATE produtos SET quantidade = ? WHERE id = ?";
+        String sql = "UPDATE produtos SET quantidade = quantidade - ? WHERE id = ? AND quantidade >= ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setInt(1,quantidade);
             stmt.setInt(2,id);
+            stmt.setInt(3,quantidade);
 
             return stmt.executeUpdate()>0;
         }

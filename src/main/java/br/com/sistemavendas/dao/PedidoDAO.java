@@ -56,15 +56,14 @@ public class PedidoDAO {
         }
     }
 
-    public int salvarPedido( Pedido pedido) throws SQLException{
+    public int salvarPedido(Connection conexao ,Pedido pedido) throws SQLException{
         // insere um registro com as informações do pedido , ele pega a hora atual para cadastrar o horario do pedido,
         // e como não sabemo o id ele que vai ser gerado ele retorna para gente como valor
         String sql = "INSERT INTO pedidos (id_cliente,data_pedido,valor_total) VALUES (?,CURRENT_TIMESTAMP,?) RETURNING id_pedido";
 
-        try (Connection conexao = ConnectionFactory.getConnection();
-            PreparedStatement stmt = conexao.prepareStatement(sql)){
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)){
             // fazendo a conversão dos dados trazido do banco para o tipo java
-            stmt.setInt(1,pedido.getidPedido());
+            stmt.setInt(1,pedido.getIdCliente());
             stmt.setBigDecimal(2,pedido.getvalorTotal());
 
             // pegando o id do pedido e convertendo para um tipo java

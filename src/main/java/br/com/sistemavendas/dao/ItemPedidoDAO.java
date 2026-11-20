@@ -13,12 +13,11 @@ import java.util.List;
 
 public class ItemPedidoDAO {
 
-    public ItemPedido salvarItemPedido(Integer id_pedido, Integer id_produto, int quantidade, BigDecimal preco_unitario) throws SQLException {
+    public ItemPedido salvarItemPedido(Connection conexao, Integer id_pedido, Integer id_produto, int quantidade, BigDecimal preco_unitario) throws SQLException {
 
         String sql = "INSERT INTO itens_pedido (id_pedido,id_produto, quantidade,preco_unitario) VALUES (?,?,?,?) RETURNING id_item";
 
-        try (Connection conexao = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conexao.prepareStatement(sql);) {
+        try (PreparedStatement stmt = conexao.prepareStatement(sql);) {
 
             stmt.setInt(1, id_pedido);
             stmt.setInt(2, id_produto);
@@ -34,7 +33,7 @@ public class ItemPedidoDAO {
 
 
         }
-        return null;
+        throw new SQLException("Não foi possível cadastrar o item do pedido.");
     }
 
     public List<ItemPedido> buscarItensPorPedido(Integer id) throws SQLException{
