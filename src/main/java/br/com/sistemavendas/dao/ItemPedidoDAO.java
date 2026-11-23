@@ -36,13 +36,12 @@ public class ItemPedidoDAO {
         throw new SQLException("Não foi possível cadastrar o item do pedido.");
     }
 
-    public List<ItemPedido> buscarItensPorPedido(Integer id) throws SQLException{
+    public List<ItemPedido> buscarItensPorPedido(Connection conexao, Integer id) throws SQLException{
         String sql = "SELECT id_item,id_pedido,id_produto,quantidade,preco_unitario FROM itens_pedido WHERE id_pedido = ?";
 
         List<ItemPedido> itens = new ArrayList<>();
 
-        try (Connection conexao = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conexao.prepareStatement(sql);){
+        try (PreparedStatement stmt = conexao.prepareStatement(sql);){
 
             stmt.setInt(1,id);
 
@@ -88,14 +87,13 @@ public boolean atualizarItemPedido(int quantidade, BigDecimal preco_unitario,int
 
 }
 
-public boolean deletarItemPedido(int id_item) throws SQLException{
+public boolean deletarItemPedido(Connection conexao, Long id_pedido) throws SQLException{
 
-    String sql = "DELETE FROM itens_pedidos WHERE id_item= ?";
+    String sql = "DELETE FROM itens_pedido WHERE id_pedido= ?";
 
-    try(Connection conexao = ConnectionFactory.getConnection();
-        PreparedStatement stmt = conexao.prepareStatement(sql);){
+    try(PreparedStatement stmt = conexao.prepareStatement(sql);){
 
-        stmt.setInt(1,id_item);
+        stmt.setLong(1,id_pedido);
         // Criando uma variavel int pois o metodo retorna um valor inteiro das linhas afetadas (1 para true e 0 para não)
         int validaDelecao = stmt.executeUpdate();
 

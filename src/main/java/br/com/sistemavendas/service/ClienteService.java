@@ -42,6 +42,13 @@ public class ClienteService {
         if (id_cliente == null || id_cliente <1){
             throw new IllegalArgumentException("O id não pode estar vazio ou ser menor que 1!");
         }
+
+        Cliente cliente = clienteDAO.buscarClienteId(id_cliente);
+
+        if (cliente == null){
+            throw new IllegalArgumentException("O cliente não existe!");
+        }
+
         return clienteDAO.buscarClienteId(id_cliente);
     }
 
@@ -63,8 +70,14 @@ public class ClienteService {
             throw new IllegalArgumentException("O telefone não pode estar vazio,Nulo ou ser menor que 9 digitos");
         }
 
+        boolean validaCliente = clienteDAO.atualizarCliente(id_cliente,nome,email,telefone);
 
-        return clienteDAO.atualizarCliente(id_cliente,nome,email,telefone);
+        if (validaCliente){
+            System.out.println("Cliente Atualizado!");
+            return true;
+        }
+        System.out.println("Cliente não Foi atualizado!");
+        return false;
     }
 
     public boolean deletarCliente(Long id_cliente) throws SQLException{
@@ -73,6 +86,29 @@ public class ClienteService {
             throw new IllegalArgumentException("O id não pode ser vazio ou menor que 1!");
         }
 
+        boolean validaDelecao = clienteDAO.deletarCliente(id_cliente);
+        if (validaDelecao){
+            System.out.println("Cliente deletado com sucesso!!");
+            return clienteDAO.deletarCliente(id_cliente);
+        }
+        System.out.println("Cliente não Existe!");
         return clienteDAO.deletarCliente(id_cliente);
+
+
     }
+
+    public boolean existeCliente(Integer id_cliente) throws SQLException{
+
+        if (id_cliente == null || id_cliente <= 0){
+            throw new IllegalArgumentException("O id não pode ser nulo ou vazio!");
+        }
+
+          boolean verificador = clienteDAO.existeCliente(id_cliente);
+
+        if (!verificador){
+            throw new IllegalArgumentException("O cliente não existe");
+        }
+        return verificador;
+    }
+
 }

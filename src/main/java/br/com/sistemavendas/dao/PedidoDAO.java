@@ -102,9 +102,9 @@ public class PedidoDAO {
     }
 
 
-    public boolean deletarPedido(Long id) throws SQLException{
+    public boolean deletarPedido(Connection conexao, Long id) throws SQLException{
 
-        String sql = "DELETE FROM pedidos WHERE id =?";
+        String sql = "DELETE FROM pedidos WHERE id_pedido =?";
 
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql);){
@@ -121,5 +121,6 @@ public class PedidoDAO {
         }
 
     }
+
 
 }

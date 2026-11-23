@@ -182,4 +182,20 @@ public class ProdutoDAO {
 
     }
 
+    // devolve ao estoque a quantidade de produtos de um pedido excluído.
+    public boolean devolverEstoque(Connection conn, int id, int quantidade)
+            throws SQLException {
+
+        String sql = "UPDATE produtos SET quantidade = quantidade + ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, quantidade);
+            stmt.setInt(2, id);
+
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+
 }

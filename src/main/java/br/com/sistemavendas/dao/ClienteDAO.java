@@ -73,19 +73,44 @@ public class ClienteDAO {
 
                 stmt.setLong(1,id_cliente);
 
-                ResultSet resultado = stmt.executeQuery();
+                try (ResultSet resultado = stmt.executeQuery();){
 
-                if (resultado.next()){
-                    return new Cliente(
-                            resultado.getLong("id_cliente"),
-                            resultado.getString("nome"),
-                            resultado.getString("email"),
-                            resultado.getString("telefone")
-                    );
+                    if (resultado.next()){
+                        return new Cliente(
+                                resultado.getLong("id_cliente"),
+                                resultado.getString("nome"),
+                                resultado.getString("email"),
+                                resultado.getString("telefone")
+                        );
+                    }
+                    return null;
+
                 }
-                return null;
 
             }
+
+        }
+
+        public boolean existeCliente(Integer id_cliente)throws SQLException{
+
+            String sql = "SELECT * FROM clientes where id_cliente = ?";
+
+            try (Connection conn = ConnectionFactory.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)){
+
+                stmt.setInt(1,id_cliente);
+
+                try (ResultSet resultado = stmt.executeQuery()){
+                    if (resultado.next()){
+                        return true;
+                    }else {
+                        return false;
+                }
+
+                }
+
+            }
+
 
         }
 

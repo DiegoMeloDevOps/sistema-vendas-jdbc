@@ -4,6 +4,7 @@ import br.com.sistemavendas.dao.ItemPedidoDAO;
 import br.com.sistemavendas.model.ItemPedido;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ItemPedidoService {
     }
 
     // regra de negocio para salvar item pedido
-    public ItemPedido salvarItemPedido(Integer id_pedido, Integer id_produto, int quantidade, BigDecimal preco_unitario) throws SQLException{
+    public ItemPedido salvarItemPedido(Connection conn, Integer id_pedido, Integer id_produto, int quantidade, BigDecimal preco_unitario) throws SQLException{
 
         if (id_pedido == null || id_produto == null || id_pedido < 1 || id_produto < 1){
             throw new IllegalArgumentException("Preencha os IDs Corretamente! ");
@@ -31,17 +32,17 @@ public class ItemPedidoService {
             throw new IllegalArgumentException("O preço Unitario deve ser maior que zero!");
         }
 
-        return itemPedidoDAO.salvarItemPedido(id_pedido,id_produto,quantidade,preco_unitario);
+        return itemPedidoDAO.salvarItemPedido(conn, id_pedido,id_produto,quantidade,preco_unitario);
     }
 
     // regra de negocio para buscar por id
-    public List<ItemPedido> buscarItensPorPedido(Integer id) throws SQLException{
+    public List<ItemPedido> buscarItensPorPedido(Connection conn, Integer id) throws SQLException{
 
         if (id == null || id < 1){
             throw new IllegalArgumentException("O id deve ser maior que 1!");
         }
 
-        return itemPedidoDAO.buscarItensPorPedido(id);
+        return itemPedidoDAO.buscarItensPorPedido(conn,id);
     }
 
     // regra de negocio para atualizar pedido
@@ -63,12 +64,12 @@ public class ItemPedidoService {
     }
 
     // regra de negocio para deletar itemPedido
-    public boolean deletarItemPedido(int id_item) throws SQLException{
+    public boolean deletarItemPedido(Connection conn, Long id_item) throws SQLException{
 
         if (id_item < 1){
             throw new IllegalArgumentException("O id tem que ser maior que zero!");
         }
-        return itemPedidoDAO.deletarItemPedido(id_item);
+        return itemPedidoDAO.deletarItemPedido(conn,id_item);
     }
 
 }

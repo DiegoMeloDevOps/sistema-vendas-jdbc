@@ -17,6 +17,7 @@ public class PedidoService {
     private final PedidoDAO pedidoDAO;
     private final ItemPedidoDAO itemPedidoDAO;
     private final ProdutoDAO produtoDAO;
+    private final ClienteService clienteService;
 
     // criando um construtor com injeção de dependencia
     // assim a logica de negocio fica separada da logica de conexao, se caso mexermos na logica
@@ -24,11 +25,13 @@ public class PedidoService {
     public PedidoService(
             PedidoDAO pedidoDAO,
             ItemPedidoDAO itemPedidoDAO,
-            ProdutoDAO produtoDAO) {
+            ProdutoDAO produtoDAO,
+            ClienteService clienteService) {
 
         this.pedidoDAO = pedidoDAO;
         this.itemPedidoDAO = itemPedidoDAO;
         this.produtoDAO = produtoDAO;
+        this.clienteService = clienteService;
     }
 
     // regra de negocio para cadastrar pedidos
@@ -41,6 +44,10 @@ public class PedidoService {
             throw new IllegalArgumentException("Cliente inválido!");
         }
 
+        // verifica se o cliente existe, chamando o metodo da classe clienteService
+        clienteService.existeCliente(pedido.getIdCliente());
+
+
         if (pedido.getvalorTotal() == null
                 || pedido.getvalorTotal().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Valor total inválido!");
@@ -49,6 +56,8 @@ public class PedidoService {
         if (pedido.getItens() == null || pedido.getItens().isEmpty()) {
             throw new IllegalArgumentException("O pedido precisa ter itens!");
         }
+        //variável responsável por acumular o valor dos itens.
+        BigDecimal valorCalculado = BigDecimal.ZERO;
 
         for (ItemPedido item : pedido.getItens()) {
 
@@ -61,7 +70,22 @@ public class PedidoService {
 
                 throw new IllegalArgumentException("Item do pedido inválido!");
             }
+            //calcula o subtotal de cada item.
+            BigDecimal subtotal = item.getprecoUnitario().multiply(BigDecimal.valueOf(item.getQuantidade()));
+            //acumula os subtotais.
+            valorCalculado = valorCalculado.add(subtotal);
+
+
         }
+
+        //compara o valor calculado com o valor informado no pedido.
+        if (valorCalculado.compareTo(pedido.getvalorTotal()) != 0) {
+            throw new IllegalArgumentException(
+                    "O valor total do pedido não corresponde à soma dos itens!"
+            );
+        }
+
+
 
         // Uma única conexão para toda a transação
         try (Connection conn = ConnectionFactory.getConnection()) {
@@ -147,16 +171,75 @@ public class PedidoService {
             throw new IllegalArgumentException("O valor deve ser preenchido e não pode ser zero!");
         }
 
+        if (pedido.getidPedido() == null || pedido.getidPedido() <= 0){
+            throw new IllegalArgumentException("Id do pedido invalido!");
+        }
+
+        clienteService.existeCliente(pedido.getIdCliente());
+
         return pedidoDAO.atualizarPedido(pedido);
     }
     // regra de negocio para deletar pedido
-    public boolean deletarPedido(Long id)throws SQLException{
+    public boolean deletarPedido(Long id) throws SQLException {
 
-        if (id < 0 || id == null){
-            throw new IllegalArgumentException("O id deve ser preenchido, não pode ser zero! e tem que existir!");
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID do pedido inválido!");
         }
 
-        return pedidoDAO.deletarPedido(id);
+        try (Connection conn = ConnectionFactory.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try {
+
+                // 1. Busca todos os itens antes de excluí-los.
+                List<ItemPedido> itens =
+                        itemPedidoDAO.buscarItensPorPedido(conn, id.intValue());
+
+                // 2. Devolve cada produto ao estoque.
+                for (ItemPedido item : itens) {
+
+                    boolean devolvido = produtoDAO.devolverEstoque(
+                            conn,
+                            item.getidProduto(),
+                            item.getQuantidade()
+                    );
+
+                    if (!devolvido) {
+                        throw new SQLException(
+                                "Não foi possível devolver o produto ID: "
+                                        + item.getidProduto()
+                        );
+                    }
+                }
+
+                // 3. Exclui os itens vinculados ao pedido.
+                itemPedidoDAO.deletarItemPedido(conn, id);
+
+                // 4. Exclui o pedido.
+                boolean excluido = pedidoDAO.deletarPedido(conn, id);
+
+                if (!excluido) {
+                    throw new SQLException("Pedido não encontrado!");
+                }
+
+                // 5. Confirma todas as operações.
+                conn.commit();
+
+                return true;
+
+            } catch (SQLException | RuntimeException e) {
+
+                // Se algo falhar, desfaz todas as operações.
+                try {
+                    conn.rollback();
+                } catch (SQLException erroRollback) {
+                    e.addSuppressed(erroRollback);
+                }
+
+                throw e;
+            }
+        }
     }
 
 }
